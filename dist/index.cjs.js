@@ -4,11 +4,14 @@ var require$$1$1 = require('http');
 var require$$2 = require('https');
 var require$$0$3 = require('url');
 var require$$3 = require('stream');
-var require$$4 = require('assert');
+var require$$4$1 = require('assert');
 var require$$0$2 = require('tty');
 var require$$1 = require('util');
 var require$$0$1 = require('os');
 var require$$8 = require('zlib');
+var require$$0$4 = require('fs');
+var require$$1$2 = require('path');
+var require$$3$1 = require('crypto');
 
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1078,7 +1081,7 @@ var followRedirects = {exports: {}};
 
 var src = {exports: {}};
 
-var browser$1 = {exports: {}};
+var browser$2 = {exports: {}};
 
 /**
  * Helpers.
@@ -1538,7 +1541,7 @@ function requireCommon () {
 var hasRequiredBrowser;
 
 function requireBrowser () {
-	if (hasRequiredBrowser) return browser$1.exports;
+	if (hasRequiredBrowser) return browser$2.exports;
 	hasRequiredBrowser = 1;
 	(function (module, exports) {
 		/**
@@ -1810,8 +1813,8 @@ function requireBrowser () {
 				return '[UnexpectedJSONParseError]: ' + error.message;
 			}
 		}; 
-	} (browser$1, browser$1.exports));
-	return browser$1.exports;
+	} (browser$2, browser$2.exports));
+	return browser$2.exports;
 }
 
 var node = {exports: {}};
@@ -2296,7 +2299,7 @@ function requireFollowRedirects () {
 	var http = require$$1$1;
 	var https = require$$2;
 	var Writable = require$$3.Writable;
-	var assert = require$$4;
+	var assert = require$$4$1;
 	var debug = requireDebug();
 
 	// Whether to use the native URL object or the legacy url module
@@ -2966,11 +2969,11 @@ function requireFollowRedirects () {
 	return followRedirects.exports;
 }
 
-var name = "axios";
-var version = "0.21.4";
-var description = "Promise based HTTP client for the browser and node.js";
-var main = "index.js";
-var scripts = {
+var name$1 = "axios";
+var version$2 = "0.21.4";
+var description$1 = "Promise based HTTP client for the browser and node.js";
+var main$2 = "index.js";
+var scripts$1 = {
 	test: "grunt test",
 	start: "node ./sandbox/server.js",
 	build: "NODE_ENV=production grunt build",
@@ -2981,11 +2984,11 @@ var scripts = {
 	coveralls: "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
 	fix: "eslint --fix lib/**/*.js"
 };
-var repository = {
+var repository$1 = {
 	type: "git",
 	url: "https://github.com/axios/axios.git"
 };
-var keywords = [
+var keywords$1 = [
 	"xhr",
 	"http",
 	"ajax",
@@ -2993,12 +2996,12 @@ var keywords = [
 	"node"
 ];
 var author = "Matt Zabriskie";
-var license = "MIT";
+var license$1 = "MIT";
 var bugs = {
 	url: "https://github.com/axios/axios/issues"
 };
 var homepage = "https://axios-http.com";
-var devDependencies = {
+var devDependencies$1 = {
 	coveralls: "^3.0.0",
 	"es6-promise": "^4.2.4",
 	grunt: "^1.3.0",
@@ -3033,7 +3036,7 @@ var devDependencies = {
 	webpack: "^4.44.2",
 	"webpack-dev-server": "^3.11.0"
 };
-var browser = {
+var browser$1 = {
 	"./lib/adapters/http.js": "./lib/adapters/xhr.js"
 };
 var jsdelivr = "dist/axios.min.js";
@@ -3049,19 +3052,19 @@ var bundlesize = [
 	}
 ];
 var require$$0 = {
-	name: name,
-	version: version,
-	description: description,
-	main: main,
-	scripts: scripts,
-	repository: repository,
-	keywords: keywords,
+	name: name$1,
+	version: version$2,
+	description: description$1,
+	main: main$2,
+	scripts: scripts$1,
+	repository: repository$1,
+	keywords: keywords$1,
 	author: author,
-	license: license,
+	license: license$1,
 	bugs: bugs,
 	homepage: homepage,
-	devDependencies: devDependencies,
-	browser: browser,
+	devDependencies: devDependencies$1,
+	browser: browser$1,
 	jsdelivr: jsdelivr,
 	unpkg: unpkg,
 	typings: typings,
@@ -4198,57 +4201,717 @@ var axios = axiosExports;
 
 var axios$1 = /*@__PURE__*/getDefaultExportFromCjs(axios);
 
-// src/index.js
+var main$1 = {exports: {}};
 
-const customAxios = axios$1.create({
-  baseURL: 'https://your-api-base-url.com',
-  timeout: 5000,
-});
+var name = "dotenv";
+var version$1 = "16.4.5";
+var description = "Loads environment variables from .env file";
+var main = "lib/main.js";
+var types = "lib/main.d.ts";
+var exports$1 = {
+	".": {
+		types: "./lib/main.d.ts",
+		require: "./lib/main.js",
+		"default": "./lib/main.js"
+	},
+	"./config": "./config.js",
+	"./config.js": "./config.js",
+	"./lib/env-options": "./lib/env-options.js",
+	"./lib/env-options.js": "./lib/env-options.js",
+	"./lib/cli-options": "./lib/cli-options.js",
+	"./lib/cli-options.js": "./lib/cli-options.js",
+	"./package.json": "./package.json"
+};
+var scripts = {
+	"dts-check": "tsc --project tests/types/tsconfig.json",
+	lint: "standard",
+	"lint-readme": "standard-markdown",
+	pretest: "npm run lint && npm run dts-check",
+	test: "tap tests/*.js --100 -Rspec",
+	"test:coverage": "tap --coverage-report=lcov",
+	prerelease: "npm test",
+	release: "standard-version"
+};
+var repository = {
+	type: "git",
+	url: "git://github.com/motdotla/dotenv.git"
+};
+var funding = "https://dotenvx.com";
+var keywords = [
+	"dotenv",
+	"env",
+	".env",
+	"environment",
+	"variables",
+	"config",
+	"settings"
+];
+var readmeFilename = "README.md";
+var license = "BSD-2-Clause";
+var devDependencies = {
+	"@definitelytyped/dtslint": "^0.0.133",
+	"@types/node": "^18.11.3",
+	decache: "^4.6.1",
+	sinon: "^14.0.1",
+	standard: "^17.0.0",
+	"standard-markdown": "^7.1.0",
+	"standard-version": "^9.5.0",
+	tap: "^16.3.0",
+	tar: "^6.1.11",
+	typescript: "^4.8.4"
+};
+var engines = {
+	node: ">=12"
+};
+var browser = {
+	fs: false
+};
+var require$$4 = {
+	name: name,
+	version: version$1,
+	description: description,
+	main: main,
+	types: types,
+	exports: exports$1,
+	scripts: scripts,
+	repository: repository,
+	funding: funding,
+	keywords: keywords,
+	readmeFilename: readmeFilename,
+	license: license,
+	devDependencies: devDependencies,
+	engines: engines,
+	browser: browser
+};
 
-customAxios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const formattedError = formatError(error);
-    console.error(formattedError);
-    sendErrorToWhatsApp(formattedError);
-    return Promise.reject(formattedError);
+const fs = require$$0$4;
+const path = require$$1$2;
+const os = require$$0$1;
+const crypto = require$$3$1;
+const packageJson = require$$4;
+
+const version = packageJson.version;
+
+const LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
+
+// Parse src into an Object
+function parse (src) {
+  const obj = {};
+
+  // Convert buffer to string
+  let lines = src.toString();
+
+  // Convert line breaks to same format
+  lines = lines.replace(/\r\n?/mg, '\n');
+
+  let match;
+  while ((match = LINE.exec(lines)) != null) {
+    const key = match[1];
+
+    // Default undefined or null to empty string
+    let value = (match[2] || '');
+
+    // Remove whitespace
+    value = value.trim();
+
+    // Check if double quoted
+    const maybeQuote = value[0];
+
+    // Remove surrounding quotes
+    value = value.replace(/^(['"`])([\s\S]*)\1$/mg, '$2');
+
+    // Expand newlines if double quoted
+    if (maybeQuote === '"') {
+      value = value.replace(/\\n/g, '\n');
+      value = value.replace(/\\r/g, '\r');
+    }
+
+    // Add to object
+    obj[key] = value;
   }
-);
 
-
-
-function formatError(error) {
-    // Extract relevant details from the error object
-    const {
-      message,
-      config,
-      isAxiosError,
-    } = error;
-  
-    // Extract basic information from config
-    const {
-      url,
-      method,
-      headers,
-      baseURL,
-    } = config || {};
-  
-    return {
-    "jeff": "jeff",
-      message: message || 'An error occurred',
-      url: url || 'No URL',
-      method: method || 'No method',
-      baseURL: baseURL || 'No base URL',
-      headers: headers || {},
-      isAxiosError: isAxiosError || false,
-    };
-  }
-  
-
-function sendErrorToWhatsApp(error) {
-  console.log('Sending error to WhatsApp:', error);
+  return obj
 }
 
-exports.customAxios = customAxios;
-exports.formatError = formatError;
-exports.sendErrorToWhatsApp = sendErrorToWhatsApp;
+function _parseVault (options) {
+  const vaultPath = _vaultPath(options);
+
+  // Parse .env.vault
+  const result = DotenvModule.configDotenv({ path: vaultPath });
+  if (!result.parsed) {
+    const err = new Error(`MISSING_DATA: Cannot parse ${vaultPath} for an unknown reason`);
+    err.code = 'MISSING_DATA';
+    throw err
+  }
+
+  // handle scenario for comma separated keys - for use with key rotation
+  // example: DOTENV_KEY="dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=prod,dotenv://:key_7890@dotenvx.com/vault/.env.vault?environment=prod"
+  const keys = _dotenvKey(options).split(',');
+  const length = keys.length;
+
+  let decrypted;
+  for (let i = 0; i < length; i++) {
+    try {
+      // Get full key
+      const key = keys[i].trim();
+
+      // Get instructions for decrypt
+      const attrs = _instructions(result, key);
+
+      // Decrypt
+      decrypted = DotenvModule.decrypt(attrs.ciphertext, attrs.key);
+
+      break
+    } catch (error) {
+      // last key
+      if (i + 1 >= length) {
+        throw error
+      }
+      // try next key
+    }
+  }
+
+  // Parse decrypted .env string
+  return DotenvModule.parse(decrypted)
+}
+
+function _log (message) {
+  console.log(`[dotenv@${version}][INFO] ${message}`);
+}
+
+function _warn (message) {
+  console.log(`[dotenv@${version}][WARN] ${message}`);
+}
+
+function _debug (message) {
+  console.log(`[dotenv@${version}][DEBUG] ${message}`);
+}
+
+function _dotenvKey (options) {
+  // prioritize developer directly setting options.DOTENV_KEY
+  if (options && options.DOTENV_KEY && options.DOTENV_KEY.length > 0) {
+    return options.DOTENV_KEY
+  }
+
+  // secondary infra already contains a DOTENV_KEY environment variable
+  if (process.env.DOTENV_KEY && process.env.DOTENV_KEY.length > 0) {
+    return process.env.DOTENV_KEY
+  }
+
+  // fallback to empty string
+  return ''
+}
+
+function _instructions (result, dotenvKey) {
+  // Parse DOTENV_KEY. Format is a URI
+  let uri;
+  try {
+    uri = new URL(dotenvKey);
+  } catch (error) {
+    if (error.code === 'ERR_INVALID_URL') {
+      const err = new Error('INVALID_DOTENV_KEY: Wrong format. Must be in valid uri format like dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=development');
+      err.code = 'INVALID_DOTENV_KEY';
+      throw err
+    }
+
+    throw error
+  }
+
+  // Get decrypt key
+  const key = uri.password;
+  if (!key) {
+    const err = new Error('INVALID_DOTENV_KEY: Missing key part');
+    err.code = 'INVALID_DOTENV_KEY';
+    throw err
+  }
+
+  // Get environment
+  const environment = uri.searchParams.get('environment');
+  if (!environment) {
+    const err = new Error('INVALID_DOTENV_KEY: Missing environment part');
+    err.code = 'INVALID_DOTENV_KEY';
+    throw err
+  }
+
+  // Get ciphertext payload
+  const environmentKey = `DOTENV_VAULT_${environment.toUpperCase()}`;
+  const ciphertext = result.parsed[environmentKey]; // DOTENV_VAULT_PRODUCTION
+  if (!ciphertext) {
+    const err = new Error(`NOT_FOUND_DOTENV_ENVIRONMENT: Cannot locate environment ${environmentKey} in your .env.vault file.`);
+    err.code = 'NOT_FOUND_DOTENV_ENVIRONMENT';
+    throw err
+  }
+
+  return { ciphertext, key }
+}
+
+function _vaultPath (options) {
+  let possibleVaultPath = null;
+
+  if (options && options.path && options.path.length > 0) {
+    if (Array.isArray(options.path)) {
+      for (const filepath of options.path) {
+        if (fs.existsSync(filepath)) {
+          possibleVaultPath = filepath.endsWith('.vault') ? filepath : `${filepath}.vault`;
+        }
+      }
+    } else {
+      possibleVaultPath = options.path.endsWith('.vault') ? options.path : `${options.path}.vault`;
+    }
+  } else {
+    possibleVaultPath = path.resolve(process.cwd(), '.env.vault');
+  }
+
+  if (fs.existsSync(possibleVaultPath)) {
+    return possibleVaultPath
+  }
+
+  return null
+}
+
+function _resolveHome (envPath) {
+  return envPath[0] === '~' ? path.join(os.homedir(), envPath.slice(1)) : envPath
+}
+
+function _configVault (options) {
+  _log('Loading env from encrypted .env.vault');
+
+  const parsed = DotenvModule._parseVault(options);
+
+  let processEnv = process.env;
+  if (options && options.processEnv != null) {
+    processEnv = options.processEnv;
+  }
+
+  DotenvModule.populate(processEnv, parsed, options);
+
+  return { parsed }
+}
+
+function configDotenv (options) {
+  const dotenvPath = path.resolve(process.cwd(), '.env');
+  let encoding = 'utf8';
+  const debug = Boolean(options && options.debug);
+
+  if (options && options.encoding) {
+    encoding = options.encoding;
+  } else {
+    if (debug) {
+      _debug('No encoding is specified. UTF-8 is used by default');
+    }
+  }
+
+  let optionPaths = [dotenvPath]; // default, look for .env
+  if (options && options.path) {
+    if (!Array.isArray(options.path)) {
+      optionPaths = [_resolveHome(options.path)];
+    } else {
+      optionPaths = []; // reset default
+      for (const filepath of options.path) {
+        optionPaths.push(_resolveHome(filepath));
+      }
+    }
+  }
+
+  // Build the parsed data in a temporary object (because we need to return it).  Once we have the final
+  // parsed data, we will combine it with process.env (or options.processEnv if provided).
+  let lastError;
+  const parsedAll = {};
+  for (const path of optionPaths) {
+    try {
+      // Specifying an encoding returns a string instead of a buffer
+      const parsed = DotenvModule.parse(fs.readFileSync(path, { encoding }));
+
+      DotenvModule.populate(parsedAll, parsed, options);
+    } catch (e) {
+      if (debug) {
+        _debug(`Failed to load ${path} ${e.message}`);
+      }
+      lastError = e;
+    }
+  }
+
+  let processEnv = process.env;
+  if (options && options.processEnv != null) {
+    processEnv = options.processEnv;
+  }
+
+  DotenvModule.populate(processEnv, parsedAll, options);
+
+  if (lastError) {
+    return { parsed: parsedAll, error: lastError }
+  } else {
+    return { parsed: parsedAll }
+  }
+}
+
+// Populates process.env from .env file
+function config (options) {
+  // fallback to original dotenv if DOTENV_KEY is not set
+  if (_dotenvKey(options).length === 0) {
+    return DotenvModule.configDotenv(options)
+  }
+
+  const vaultPath = _vaultPath(options);
+
+  // dotenvKey exists but .env.vault file does not exist
+  if (!vaultPath) {
+    _warn(`You set DOTENV_KEY but you are missing a .env.vault file at ${vaultPath}. Did you forget to build it?`);
+
+    return DotenvModule.configDotenv(options)
+  }
+
+  return DotenvModule._configVault(options)
+}
+
+function decrypt (encrypted, keyStr) {
+  const key = Buffer.from(keyStr.slice(-64), 'hex');
+  let ciphertext = Buffer.from(encrypted, 'base64');
+
+  const nonce = ciphertext.subarray(0, 12);
+  const authTag = ciphertext.subarray(-16);
+  ciphertext = ciphertext.subarray(12, -16);
+
+  try {
+    const aesgcm = crypto.createDecipheriv('aes-256-gcm', key, nonce);
+    aesgcm.setAuthTag(authTag);
+    return `${aesgcm.update(ciphertext)}${aesgcm.final()}`
+  } catch (error) {
+    const isRange = error instanceof RangeError;
+    const invalidKeyLength = error.message === 'Invalid key length';
+    const decryptionFailed = error.message === 'Unsupported state or unable to authenticate data';
+
+    if (isRange || invalidKeyLength) {
+      const err = new Error('INVALID_DOTENV_KEY: It must be 64 characters long (or more)');
+      err.code = 'INVALID_DOTENV_KEY';
+      throw err
+    } else if (decryptionFailed) {
+      const err = new Error('DECRYPTION_FAILED: Please check your DOTENV_KEY');
+      err.code = 'DECRYPTION_FAILED';
+      throw err
+    } else {
+      throw error
+    }
+  }
+}
+
+// Populate process.env with parsed values
+function populate (processEnv, parsed, options = {}) {
+  const debug = Boolean(options && options.debug);
+  const override = Boolean(options && options.override);
+
+  if (typeof parsed !== 'object') {
+    const err = new Error('OBJECT_REQUIRED: Please check the processEnv argument being passed to populate');
+    err.code = 'OBJECT_REQUIRED';
+    throw err
+  }
+
+  // Set process.env
+  for (const key of Object.keys(parsed)) {
+    if (Object.prototype.hasOwnProperty.call(processEnv, key)) {
+      if (override === true) {
+        processEnv[key] = parsed[key];
+      }
+
+      if (debug) {
+        if (override === true) {
+          _debug(`"${key}" is already defined and WAS overwritten`);
+        } else {
+          _debug(`"${key}" is already defined and was NOT overwritten`);
+        }
+      }
+    } else {
+      processEnv[key] = parsed[key];
+    }
+  }
+}
+
+const DotenvModule = {
+  configDotenv,
+  _configVault,
+  _parseVault,
+  config,
+  decrypt,
+  parse,
+  populate
+};
+
+main$1.exports.configDotenv = DotenvModule.configDotenv;
+main$1.exports._configVault = DotenvModule._configVault;
+main$1.exports._parseVault = DotenvModule._parseVault;
+main$1.exports.config = DotenvModule.config;
+main$1.exports.decrypt = DotenvModule.decrypt;
+main$1.exports.parse = DotenvModule.parse;
+main$1.exports.populate = DotenvModule.populate;
+
+main$1.exports = DotenvModule;
+
+var mainExports = main$1.exports;
+var dotenv = /*@__PURE__*/getDefaultExportFromCjs(mainExports);
+
+// Function to send the error details to the /add_usage API
+async function sent_stats(error) {
+    try {
+      // Define the API endpoint and the request body (error details)
+      const apiEndpoint = 'http://localhost:3000/add_usage';
+      const requestBody = {
+        details: error,
+      };
+  
+      // Make a POST request to the /add_usage API
+      const response = await axios$1.post(apiEndpoint, requestBody);
+  
+      // Log the success response
+    //   console.log('Error sent to /add_usage successfully:', response.data);
+
+    return response.data;
+  
+    } catch (e) {
+      console.error('Error sending to /add_usage API:', e);
+    }
+  }
+
+
+  // Function to send the error details to the /add_usage API
+async function sent_message(phonenumber,msgtext) {
+  try {
+    // Define the API endpoint and the request body (error details)
+    const apiEndpoint = 'http://localhost:3000/send_message';
+    const requestBody = {
+      phonenumber: phonenumber,
+      text: msgtext,
+    };
+
+    // Make a POST request to the /add_usage API
+    const response = await axios$1.post(apiEndpoint, requestBody);
+
+    // Log the success response
+  //   console.log('Error sent to /add_usage successfully:', response.data);
+
+  return response.data;
+
+  } catch (e) {
+    console.error('Error sending to /add_usage API:', e);
+  }
+}
+
+dotenv.config();
+
+// Module-level variable to store the phone number
+let globalPhoneNumber = '';
+
+// Function to create a custom Axios instance
+function createWatios({ phonenumber, passkey }) {
+  // Validate the passkey
+  if (!validatePasskey(passkey)) {
+    throw new Error('Invalid passkey provided');
+  }
+
+  // Update the global phone number variable
+  globalPhoneNumber = phonenumber;
+
+  const instance = axios$1.create({
+    timeout: 5000, // No baseURL, just timeout
+    headers: { 'Content-Type': 'application/json' }, // Set default headers for JSON
+  });
+
+  instance.phonenumber = phonenumber; // Store in instance for potential use
+
+  // Override the default error handler to use watiosAlert
+  instance.interceptors.response.use(
+    (response) => {
+      // Format and send success stats to Supabase
+      const formattedSuccess = formatSuccess(response);
+      sent_stats(formattedSuccess);
+
+      return response;
+    },
+    (error) => {
+      // Handle error with watiosAlert
+      const formattedError = formatError(error);
+      sendErrorToWhatsApp(formattedError, phonenumber);
+      sent_stats(formattedError);
+
+      return Promise.reject(formattedError); // Reject the promise with the formatted error
+    }
+  );
+
+  return instance;
+}
+
+
+
+
+// Function to validate the passkey, potentially using environment variables for security
+function validatePasskey(passkey) {
+  const validPasskey = process.env.PASSKEY || 'jeff'; // Use environment variable if available
+  return passkey === validPasskey;
+}
+
+// Function to format the error with more details
+function formatError(error) {
+  const {
+    message,
+    config,
+    isAxiosError,
+    code,
+    response,
+  } = error;
+
+  const {
+    url,
+    method,
+    headers,
+  } = config || {};
+
+  const errorMessage = getErrorMessage(code, message, response);
+
+  const status = response?.status || 'No status';
+  const responseData = response?.data || 'No response data';
+  const now = new Date().toLocaleString(); // Get the current date and time
+
+  return {
+    date: now,
+    errorCode: code || 'UNKNOWN_ERROR',
+    message: errorMessage,
+    url: url || 'No URL',
+    method: method || 'No method',
+    headers: headers || {},
+    status: status,
+    responseData: responseData, // Include response data for more details
+    isAxiosError: isAxiosError || false,
+  };
+}
+
+
+// General error formatter
+function formatGeneralError(error) {
+  const now = new Date().toLocaleString(); // Get the current date and time
+
+  return {
+    date: now,
+    errorCode: error.code || 'UNKNOWN_ERROR',
+    message: error.message || 'An error occurred',
+    stack: error.stack || 'No stack trace',
+    name: error.name || 'Unknown error',
+  };
+}
+
+
+
+
+// Function to format success responses for Supabase
+function formatSuccess(response) {
+  const {
+    config: { url, method, headers },
+    status,
+    data
+  } = response;
+
+  const now = new Date().toLocaleString(); // Get the current date and time
+
+  return {
+    date: now,
+    message: 'Success',
+    url: url || 'No URL',
+    method: method || 'No method',
+    headers: headers || {},
+    status: status || 'No status',
+    responseData: data || 'No response data',
+  };
+}
+
+
+
+// Function to get a more descriptive error message
+function getErrorMessage(code, message, response) {
+  const responseData = response?.data || {};
+
+  switch (code) {
+    case 'ENOTFOUND':
+      return `Network error: Unable to resolve the URL. Please check your internet connection or verify the URL.`;
+    case 'ECONNABORTED':
+      return `Request timed out: The request took too long and was aborted. Please try again later.`;
+    case 'ECONNREFUSED':
+      return `Connection refused: The server refused to establish a connection. Please ensure the server is running.`;
+    case 'ETIMEDOUT':
+      return `Request timed out: The server did not respond in time. Please try again later.`;
+    case 'ERR_NETWORK':
+      return `Network error: There was an issue with the network. Please check your connection and try again.`;
+    case 'ERR_BAD_REQUEST':
+      if (responseData && responseData.error) {
+        return `Bad request: ${responseData.error.message || 'The request could not be understood by the server. Please check the request syntax and body.'}`;
+      }
+      return `Bad request: The request could not be understood by the server. Please check the request syntax and body.`;
+    default:
+      return `An unknown error occurred: ${message || 'No error message available.'}`;
+  }
+}
+
+// Function to send the formatted error message to WhatsApp
+function sendErrorToWhatsApp(error, phoneNumber) {
+  const now = new Date().toLocaleString(); // Get the current date and time
+
+  const msgtext = `🚨 *ERROR ALERT* 🚨
+
+*Date & Time:* ${now}
+*Error Code:* ${error.errorCode}
+*Message:* ${error.message}
+*URL:* ${error.url || 'N/A'}
+*Method:* ${error.method || 'N/A'}
+*Status:* ${error.status || 'N/A'}
+*Response Data:* ${JSON.stringify(error.responseData || {})}
+`;
+
+  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+}
+
+// Function to send the formatted error message to WhatsApp
+function sendErrorToWhatsApp2(error, phoneNumber) {
+  new Date().toLocaleString(); // Get the current date and time
+
+  const stackLines = error.stack ? error.stack.split('\n').slice(0, 2).join('\n') : 'No stack trace available';
+
+  // Create a formatted message based on error details
+  const msgtext = `🚨 *ERROR ALERT* 🚨
+
+*Date & Time:* ${error.date}
+*Error Code:* ${error.errorCode}
+*Error Name:* ${error.name}
+*Message:* ${error.message}
+*Stack Trace:*
+\`\`\`
+${stackLines}
+\`\`\`
+`;
+
+  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+}
+
+
+// General error handler for any error type
+function watiosAlert(error) {
+  let formattedError;
+
+  // Check if it's an Axios error
+  if (error.isAxiosError) {
+    formattedError = formatError(error);
+  } else {
+    formattedError = formatGeneralError(error); // Handle general errors
+  }
+
+  console.log('Error occurred:', formattedError); // Log the formatted error
+
+  // Use the global phone number
+  if (!globalPhoneNumber) {
+    throw new Error('Phone number is not available');
+  }
+
+  sendErrorToWhatsApp2(formattedError, globalPhoneNumber); // Send to WhatsApp
+  sent_stats(formattedError); // Send error details to Supabase
+
+  return formattedError; // Returning formatted error for further handling if needed
+}
+
+exports.createWatios = createWatios;
+exports.watiosAlert = watiosAlert;

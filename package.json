@@ -13,7 +13,9 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "dotenv": "^16.4.5",
+    "pino-pretty": "^11.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
