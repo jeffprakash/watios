@@ -5,8 +5,9 @@ import { sent_stats, sent_message } from './api.js'; // Import success handler
 
 dotenv.config();
 
-// Module-level variable to store the phone number
+// Module-level variables
 let globalPhoneNumber = '';
+const errorMap = new Map(); // Map to track error occurrences
 
 // Function to create a custom Axios instance
 function createWatios({ phonenumber, passkey }) {
@@ -15,7 +16,6 @@ function createWatios({ phonenumber, passkey }) {
     throw new Error('Invalid passkey provided');
   }
 
-  // Update the global phone number variable
   globalPhoneNumber = phonenumber;
 
   const instance = axios.create({
@@ -28,29 +28,24 @@ function createWatios({ phonenumber, passkey }) {
   // Override the default error handler to use watiosAlert
   instance.interceptors.response.use(
     (response) => {
-      // Format and send success stats to Supabase
       const formattedSuccess = formatSuccess(response);
       sent_stats(formattedSuccess);
-
       return response;
     },
     (error) => {
-      // Handle error with watiosAlert
       const formattedError = formatError(error);
-      sendErrorToWhatsApp(formattedError, phonenumber);
+      if (shouldSendError(formattedError)) {
+        sendErrorToWhatsApp(formattedError, phonenumber);
+      }
       sent_stats(formattedError);
-
-      return Promise.reject(formattedError); // Reject the promise with the formatted error
+      return Promise.reject(formattedError);
     }
   );
 
   return instance;
 }
 
-
-
-
-// Function to validate the passkey, potentially using environment variables for security
+// Function to validate the passkey
 function validatePasskey(passkey) {
   const validPasskey = process.env.PASSKEY || 'jeff'; // Use environment variable if available
   return passkey === validPasskey;
@@ -58,22 +53,10 @@ function validatePasskey(passkey) {
 
 // Function to format the error with more details
 function formatError(error) {
-  const {
-    message,
-    config,
-    isAxiosError,
-    code,
-    response,
-  } = error;
-
-  const {
-    url,
-    method,
-    headers,
-  } = config || {};
+  const { message, config, isAxiosError, code, response } = error;
+  const { url, method, headers } = config || {};
 
   const errorMessage = getErrorMessage(code, message, response);
-
   const status = response?.status || 'No status';
   const responseData = response?.data || 'No response data';
   const now = new Date().toLocaleString(); // Get the current date and time
@@ -91,8 +74,7 @@ function formatError(error) {
   };
 }
 
-
-// General error formatter
+// Function to format general JavaScript errors (non-Axios)
 function formatGeneralError(error) {
   const now = new Date().toLocaleString(); // Get the current date and time
 
@@ -100,22 +82,14 @@ function formatGeneralError(error) {
     date: now,
     errorCode: error.code || 'UNKNOWN_ERROR',
     message: error.message || 'An error occurred',
-    stack: error.stack || 'No stack trace',
+    stack: error.stack || 'No stack trace available',
     name: error.name || 'Unknown error',
   };
 }
 
-
-
-
 // Function to format success responses for Supabase
 function formatSuccess(response) {
-  const {
-    config: { url, method, headers },
-    status,
-    data
-  } = response;
-
+  const { config: { url, method, headers }, status, data } = response;
   const now = new Date().toLocaleString(); // Get the current date and time
 
   return {
@@ -129,12 +103,9 @@ function formatSuccess(response) {
   };
 }
 
-
-
 // Function to get a more descriptive error message
 function getErrorMessage(code, message, response) {
   const responseData = response?.data || {};
-
   switch (code) {
     case 'ENOTFOUND':
       return `Network error: Unable to resolve the URL. Please check your internet connection or verify the URL.`;
@@ -147,10 +118,7 @@ function getErrorMessage(code, message, response) {
     case 'ERR_NETWORK':
       return `Network error: There was an issue with the network. Please check your connection and try again.`;
     case 'ERR_BAD_REQUEST':
-      if (responseData && responseData.error) {
-        return `Bad request: ${responseData.error.message || 'The request could not be understood by the server. Please check the request syntax and body.'}`;
-      }
-      return `Bad request: The request could not be understood by the server. Please check the request syntax and body.`;
+      return `Bad request: ${responseData.error?.message || 'The request could not be understood by the server. Please check the request syntax and body.'}`;
     default:
       return `An unknown error occurred: ${message || 'No error message available.'}`;
   }
@@ -171,31 +139,28 @@ function sendErrorToWhatsApp(error, phoneNumber) {
 *Response Data:* ${JSON.stringify(error.responseData || {})}
 `;
 
-  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+console.log('Sending error message to WhatsApp...', msgtext);
+  // sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
 }
 
-// Function to send the formatted error message to WhatsApp
-function sendErrorToWhatsApp2(error, phoneNumber) {
-  const now = new Date().toLocaleString(); // Get the current date and time
+// Function to check if the error should be sent to WhatsApp (prevents duplicates within 3 minutes)
+function shouldSendError(error) {
+  const errorKey = `${error.errorCode}-${error.url}-${error.method}`; // Unique key for the error
+  const currentTime = Date.now();
 
-  const stackLines = error.stack ? error.stack.split('\n').slice(0, 2).join('\n') : 'No stack trace available';
+  if (errorMap.has(errorKey)) {
+    const lastErrorTime = errorMap.get(errorKey);
+    // Check if the last error was sent within the last 3 minutes (180000 ms)
+    if (currentTime - lastErrorTime < 180000) {
+      console.log('Duplicate error detected within 3 minutes. Not sending to WhatsApp.');
+      return false; // Don't send duplicate
+    }
+  }
 
-  // Create a formatted message based on error details
-  const msgtext = `🚨 *ERROR ALERT* 🚨
-
-*Date & Time:* ${error.date}
-*Error Code:* ${error.errorCode}
-*Error Name:* ${error.name}
-*Message:* ${error.message}
-*Stack Trace:*
-\`\`\`
-${stackLines}
-\`\`\`
-`;
-
-  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+  // Update the map with the current time
+  errorMap.set(errorKey, currentTime);
+  return true; // Send error
 }
-
 
 // General error handler for any error type
 function watiosAlert(error) {
@@ -208,16 +173,19 @@ function watiosAlert(error) {
     formattedError = formatGeneralError(error); // Handle general errors
   }
 
-  console.log('Error occurred:', formattedError); // Log the formatted error
+  console.log('Error occurred:', formattedError);
 
   // Use the global phone number
   if (!globalPhoneNumber) {
     throw new Error('Phone number is not available');
   }
 
-  sendErrorToWhatsApp2(formattedError, globalPhoneNumber); // Send to WhatsApp
-  sent_stats(formattedError); // Send error details to Supabase
+  // Check if we should send the error to WhatsApp
+  if (shouldSendError(formattedError)) {
+    sendErrorToWhatsApp(formattedError, globalPhoneNumber); // Send to WhatsApp
+  }
 
+  sent_stats(formattedError); // Send error details to Supabase
   return formattedError; // Returning formatted error for further handling if needed
 }
 
