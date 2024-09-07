@@ -4671,6 +4671,30 @@ async function sent_stats(error) {
     }
   }
 
+
+  // Function to send the error details to the /add_usage API
+async function sent_message(phonenumber,msgtext) {
+  try {
+    // Define the API endpoint and the request body (error details)
+    const apiEndpoint = 'http://localhost:3000/send_message';
+    const requestBody = {
+      phonenumber: phonenumber,
+      text: msgtext,
+    };
+
+    // Make a POST request to the /add_usage API
+    const response = await axios$1.post(apiEndpoint, requestBody);
+
+    // Log the success response
+  //   console.log('Error sent to /add_usage successfully:', response.data);
+
+  return response.data;
+
+  } catch (e) {
+    console.error('Error sending to /add_usage API:', e);
+  }
+}
+
 dotenv.config();
 
 // Module-level variables
@@ -4703,7 +4727,7 @@ function createWatios({ phonenumber, passkey }) {
     (error) => {
       const formattedError = formatError(error);
       if (shouldSendError(formattedError)) {
-        sendErrorToWhatsApp(formattedError);
+        sendErrorToWhatsApp(formattedError, phonenumber);
       }
       sent_stats(formattedError);
       return Promise.reject(formattedError);
@@ -4742,7 +4766,6 @@ function formatError(error) {
   };
 }
 
-// Function to format general JavaScript errors (non-Axios)
 function formatGeneralError(error) {
   const now = new Date().toLocaleString(); // Get the current date and time
 
@@ -4805,10 +4828,10 @@ function sendErrorToWhatsApp(error, phoneNumber) {
 *Method:* ${error.method || 'N/A'}
 *Status:* ${error.status || 'N/A'}
 *Response Data:* ${JSON.stringify(error.responseData || {})}
+*name:* ${error.name || 'N/A'}
 `;
 
-console.log('Sending error message to WhatsApp...', msgtext);
-  // sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
 }
 
 // Function to check if the error should be sent to WhatsApp (prevents duplicates within 3 minutes)
@@ -4850,7 +4873,7 @@ function watiosAlert(error) {
 
   // Check if we should send the error to WhatsApp
   if (shouldSendError(formattedError)) {
-    sendErrorToWhatsApp(formattedError); // Send to WhatsApp
+    sendErrorToWhatsApp(formattedError, globalPhoneNumber); // Send to WhatsApp
   }
 
   sent_stats(formattedError); // Send error details to Supabase

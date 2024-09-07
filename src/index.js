@@ -74,7 +74,6 @@ function formatError(error) {
   };
 }
 
-// Function to format general JavaScript errors (non-Axios)
 function formatGeneralError(error) {
   const now = new Date().toLocaleString(); // Get the current date and time
 
@@ -137,10 +136,10 @@ function sendErrorToWhatsApp(error, phoneNumber) {
 *Method:* ${error.method || 'N/A'}
 *Status:* ${error.status || 'N/A'}
 *Response Data:* ${JSON.stringify(error.responseData || {})}
+*name:* ${error.name || 'N/A'}
 `;
 
-console.log('Sending error message to WhatsApp...', msgtext);
-  // sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
+  sent_message(phoneNumber, msgtext); // Sending the message to WhatsApp
 }
 
 // Function to check if the error should be sent to WhatsApp (prevents duplicates within 3 minutes)
