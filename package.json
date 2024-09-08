@@ -7,7 +7,7 @@
   "type": "module",
   "exports": {
     "import": "./dist/index.esm.js",
-    "require": "./dist/index.cjs.js"
+    "require": "./dist/index.cjs"
   },
   "scripts": {
     "build": "rollup -c",

@@ -4647,16 +4647,40 @@ main$1.exports = DotenvModule;
 var mainExports = main$1.exports;
 var dotenv = /*@__PURE__*/getDefaultExportFromCjs(mainExports);
 
+// Function to send the error details to the /add_usage API
+async function sent_stats(error,passkey) {
+    try {
+      // Define the API endpoint and the request body (error details)
+      const apiEndpoint = 'http://localhost:3000/add_usage';
+      const requestBody = {
+        details: error,
+        passkey: passkey,
+      };
+  
+      // Make a POST request to the /add_usage API
+      const response = await axios$1.post(apiEndpoint, requestBody);
+  
+      // Log the success response
+    //   console.log('Error sent to /add_usage successfully:', response.data);
+
+    return response.data;
+  
+    } catch (e) {
+      console.error('Error sending to /add_usage API:', e);
+    }
+  }
+
 // watios.js
 
 dotenv.config();
+
+let passKey = '';
+
 const errorMap = new Map(); // Map to track error occurrences
 
 // Function to create a custom Axios instance
 function createWatios({ phonenumber, passkey }) {
-  if (!validatePasskey(passkey)) {
-    throw new Error('Invalid passkey provided');
-  }
+  passKey = passkey;
 
   const instance = axios$1.create({
     timeout: 5000,
@@ -4695,12 +4719,6 @@ function createWatios({ phonenumber, passkey }) {
   }
 
   return { instance, watiosErrorHandler };
-}
-
-// Function to validate the passkey
-function validatePasskey(passkey) {
-  const validPasskey = process.env.PASSKEY || 'jeff'; // Use environment variable if available
-  return passkey === validPasskey;
 }
 
 // Format error for WhatsApp notification and stats logging
@@ -4768,7 +4786,7 @@ function formatSuccessResponse(response) {
 function sendStatsToService(successData) {
   console.log('Sending success stats to service:', successData);
   // Assuming you have a function similar to sent_stats for success data
-  sent_stats(successData);
+  sent_stats(successData,passKey);
 }
 
 // Function to handle errors directly by passing the error object
