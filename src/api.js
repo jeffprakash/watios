@@ -2,12 +2,13 @@ import axios from "axios";
 
 
 // Function to send the error details to the /add_usage API
-async function sent_stats(error) {
+async function sent_stats(error,passkey) {
     try {
       // Define the API endpoint and the request body (error details)
       const apiEndpoint = 'http://localhost:3000/add_usage';
       const requestBody = {
         details: error,
+        passkey: passkey,
       };
   
       // Make a POST request to the /add_usage API
@@ -25,13 +26,14 @@ async function sent_stats(error) {
 
 
   // Function to send the error details to the /add_usage API
-async function sent_message(phonenumber,msgtext) {
+async function sent_message(phonenumber,msgtext,passkey) {
   try {
     // Define the API endpoint and the request body (error details)
     const apiEndpoint = 'http://localhost:3000/send_message';
     const requestBody = {
       phonenumber: phonenumber,
       text: msgtext,
+      passkey: passkey,
     };
 
     // Make a POST request to the /add_usage API

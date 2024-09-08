@@ -2,28 +2,22 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-import { verify_passkey } from './controllers/validator.js';
 import { sent_message, sent_stats } from './api.js';
 
 dotenv.config();
 
 // Module-level variables
 let globalPhoneNumber = '';
+
+let passKey = '';
+
 const errorMap = new Map(); // Map to track error occurrences
 
 // Function to create a custom Axios instance
 function createWatios({ phonenumber, passkey }) {
-  if (!validatePasskey(passkey)) {
-    throw new Error('Invalid passkey provided');
-  }
-
-
-  if (!verify_passkey(passkey)) {
-    throw new Error('Invalid passkey provided');
-  }
-
 
   globalPhoneNumber = phonenumber;
+  passKey = passkey;
 
   const instance = axios.create({
     timeout: 5000,
@@ -45,7 +39,6 @@ function createWatios({ phonenumber, passkey }) {
       return response;
     },
     (error) => {
-
       // Use watiosAlert to handle and format errors
       watiosAlert(error);
 
@@ -134,30 +127,18 @@ function formatSuccessResponse(response) {
 
 // Function to send stats to your Supabase or any other service
 function sendStatsToService(successData) {
-
-  if (!verify_passkey(passkey)) {
-    throw new Error('Invalid passkey provided');
-  }
-
   console.log('Sending success stats to service:', successData);
   // Assuming you have a function similar to sent_stats for success data
-  sent_stats(successData);
+  sent_stats(successData,passKey);
 }
 
 // Function to handle errors directly by passing the error object
 function watiosAlert(error) {
-
-
   const formattedError = formatGeneralError(error);
 
   // Log and send to WhatsApp if needed
   if (shouldSendError(formattedError)) {
-
-    if (!verify_passkey(passkey)) {
-      throw new Error('Invalid passkey provided');
-    }
-  
-    sendErrorToWhatsApp(formattedError, globalPhoneNumber);
+    sendErrorToWhatsApp(formattedError, globalPhoneNumber,passKey);
   }
 
   console.error('Watios captured:', formattedError);
