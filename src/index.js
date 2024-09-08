@@ -2,6 +2,9 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 
+import { verify_passkey } from './controllers/validator.js';
+import { sent_message, sent_stats } from './api.js';
+
 dotenv.config();
 
 // Module-level variables
@@ -13,6 +16,12 @@ function createWatios({ phonenumber, passkey }) {
   if (!validatePasskey(passkey)) {
     throw new Error('Invalid passkey provided');
   }
+
+
+  if (!verify_passkey(passkey)) {
+    throw new Error('Invalid passkey provided');
+  }
+
 
   globalPhoneNumber = phonenumber;
 
@@ -36,31 +45,18 @@ function createWatios({ phonenumber, passkey }) {
       return response;
     },
     (error) => {
-      // Handle and format errors
-      const formattedError = formatGeneralError(error);
 
-      // Log and send to WhatsApp if needed
-      if (shouldSendError(formattedError)) {
-        sendErrorToWhatsApp(formattedError, globalPhoneNumber);
-      }
-
-      console.error('Watios captured:', formattedError);
+      // Use watiosAlert to handle and format errors
+      watiosAlert(error);
 
       // Send the error to be handled by the caller
-      return Promise.reject(formattedError);
+      return Promise.reject(error);
     }
   );
 
   // Middleware function to handle errors
   function watiosErrorHandler(err, req, res, next) {
-    const formattedError = formatGeneralError(err);
-
-    // Log and send to WhatsApp
-    if (shouldSendError(formattedError)) {
-      sendErrorToWhatsApp(formattedError, globalPhoneNumber);
-    }
-
-    console.error('Watios captured:', formattedError);
+    watiosAlert(err);
 
     // Send a 500 status with error message
     res.status(500).send('An error occurred, our team has been notified!');
@@ -78,9 +74,6 @@ function validatePasskey(passkey) {
 // Format error for WhatsApp notification and stats logging
 function formatGeneralError(error) {
   const now = new Date().toLocaleString();
-
-    console.log('data checkk:', error.response.data);
-
   return {
     date: now,
     errorCode: error.response?.status || 'UNKNOWN_ERROR',
@@ -89,7 +82,6 @@ function formatGeneralError(error) {
     name: error.name || 'Unknown error',
     url: error.config?.url || 'N/A',
     method: error.config?.method || 'N/A',
-    info: error.response?.data || 'No data',
   };
 }
 
@@ -120,9 +112,6 @@ function sendErrorToWhatsApp(error, phoneNumber) {
 *Error Code:* ${error.errorCode}
 *Message:* ${error.message}
 *Stack:* ${firstTwoLines || 'N/A'}
-*URL:* ${error.url || 'N/A'}
-*Method:* ${error.method || 'N/A'}
-*Response Data:* ${JSON.stringify(error.info || {})}
 `;
 
   console.log('Sending message:', msgtext);
@@ -145,9 +134,33 @@ function formatSuccessResponse(response) {
 
 // Function to send stats to your Supabase or any other service
 function sendStatsToService(successData) {
+
+  if (!verify_passkey(passkey)) {
+    throw new Error('Invalid passkey provided');
+  }
+
   console.log('Sending success stats to service:', successData);
   // Assuming you have a function similar to sent_stats for success data
   sent_stats(successData);
 }
 
-export { createWatios };
+// Function to handle errors directly by passing the error object
+function watiosAlert(error) {
+
+
+  const formattedError = formatGeneralError(error);
+
+  // Log and send to WhatsApp if needed
+  if (shouldSendError(formattedError)) {
+
+    if (!verify_passkey(passkey)) {
+      throw new Error('Invalid passkey provided');
+    }
+  
+    sendErrorToWhatsApp(formattedError, globalPhoneNumber);
+  }
+
+  console.error('Watios captured:', formattedError);
+}
+
+export { createWatios, watiosAlert };
