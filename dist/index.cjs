@@ -4649,9 +4649,56 @@ main$1.exports = DotenvModule;
 var mainExports = main$1.exports;
 var dotenv = /*@__PURE__*/getDefaultExportFromCjs(mainExports);
 
-// watios.js
+// Function to send the error details to the /add_usage API
+async function sent_stats(error) {
+    try {
+      // Define the API endpoint and the request body (error details)
+      const apiEndpoint = 'http://localhost:3000/add_usage';
+      const requestBody = {
+        details: error,
+      };
+  
+      // Make a POST request to the /add_usage API
+      const response = await axios$1.post(apiEndpoint, requestBody);
+  
+      // Log the success response
+    //   console.log('Error sent to /add_usage successfully:', response.data);
+
+    return response.data;
+  
+    } catch (e) {
+      console.error('Error sending to /add_usage API:', e);
+    }
+  }
+
+
+  // Function to send the error details to the /add_usage API
+async function sent_message(phonenumber,msgtext) {
+  try {
+    // Define the API endpoint and the request body (error details)
+    const apiEndpoint = 'http://localhost:3000/send_message';
+    const requestBody = {
+      phonenumber: phonenumber,
+      text: msgtext,
+    };
+
+    // Make a POST request to the /add_usage API
+    const response = await axios$1.post(apiEndpoint, requestBody);
+
+    // Log the success response
+  //   console.log('Error sent to /add_usage successfully:', response.data);
+
+  return response.data;
+
+  } catch (e) {
+    console.error('Error sending to /add_usage API:', e);
+  }
+}
 
 dotenv.config();
+
+// Module-level variables
+let globalPhoneNumber = '';
 const errorMap = new Map(); // Map to track error occurrences
 
 // Function to create a custom Axios instance
@@ -4660,6 +4707,8 @@ function createWatios({ phonenumber, passkey }) {
     throw new Error('Invalid passkey provided');
   }
 
+  globalPhoneNumber = phonenumber;
+
   const instance = axios$1.create({
     timeout: 5000,
     headers: { 'Content-Type': 'application/json' },
@@ -4667,44 +4716,15 @@ function createWatios({ phonenumber, passkey }) {
 
   instance.phonenumber = phonenumber;
 
-  // Add response interceptor to track successful responses and errors
-  instance.interceptors.response.use(
-    (response) => {
-      // Format and log success response
-      const successData = formatSuccessResponse(response);
-      console.log('Success Response:', successData);
-
-      // Optionally send success stats
-      sendStatsToService(successData);
-
-      return response;
-    },
-    (error) => {
-      // Handle and format errors
-      const formattedError = formatGeneralError(error);
-
-      // Log and send to WhatsApp if needed
-      if (shouldSendError(formattedError)) {
-        sendErrorToWhatsApp(formattedError);
-      }
-
-      console.error('Watios captured:', formattedError);
-
-      // Send the error to be handled by the caller
-      return Promise.reject(formattedError);
-    }
-  );
-
-  // Middleware function to handle errors
+  // Global error handling middleware
   function watiosErrorHandler(err, req, res, next) {
     const formattedError = formatGeneralError(err);
-
+    
     // Log and send to WhatsApp
     if (shouldSendError(formattedError)) {
-      sendErrorToWhatsApp(formattedError);
+      sendErrorToWhatsApp(formattedError, globalPhoneNumber);
     }
-
-    console.error('Watios captured:', formattedError);
+    sent_stats(formattedError); // Send stats to Supabase
 
     // Send a 500 status with error message
     res.status(500).send('An error occurred, our team has been notified!');
@@ -4722,18 +4742,12 @@ function validatePasskey(passkey) {
 // Format error for WhatsApp notification and stats logging
 function formatGeneralError(error) {
   const now = new Date().toLocaleString();
-
-    console.log('data checkk:', error.response.data);
-
   return {
     date: now,
-    errorCode: error.response?.status || 'UNKNOWN_ERROR',
+    errorCode: error.code || 'UNKNOWN_ERROR',
     message: error.message || 'An error occurred',
     stack: error.stack || 'No stack trace available',
     name: error.name || 'Unknown error',
-    url: error.config?.url || 'N/A',
-    method: error.config?.method || 'N/A',
-    info: error.response?.data || 'No data',
   };
 }
 
@@ -4757,41 +4771,13 @@ function shouldSendError(error) {
 // Function to send error to WhatsApp
 function sendErrorToWhatsApp(error, phoneNumber) {
   const now = new Date().toLocaleString();
-  const stackLines = error.stack ? error.stack.split('\n') : [];
-  const firstTwoLines = stackLines.slice(0, 2).join('\n');
   const msgtext = `🚨 *ERROR ALERT* 🚨
 *Date & Time:* ${now}
 *Error Code:* ${error.errorCode}
 *Message:* ${error.message}
-*Stack:* ${firstTwoLines || 'N/A'}
-*URL:* ${error.url || 'N/A'}
-*Method:* ${error.method || 'N/A'}
-*Response Data:* ${JSON.stringify(error.info || {})}
+*Stack:* ${error.stack || 'N/A'}
 `;
-
-  console.log('Sending message:', msgtext);
-
-  // Uncomment when ready to send messages
-  // sent_message(phoneNumber, msgtext);
-}
-
-// Format success response for stats logging
-function formatSuccessResponse(response) {
-  const now = new Date().toLocaleString();
-  return {
-    date: now,
-    statusCode: response.status,
-    statusText: response.statusText,
-    data: response.data,
-    headers: response.headers,
-  };
-}
-
-// Function to send stats to your Supabase or any other service
-function sendStatsToService(successData) {
-  console.log('Sending success stats to service:', successData);
-  // Assuming you have a function similar to sent_stats for success data
-  sent_stats(successData);
+  sent_message(phoneNumber, msgtext);
 }
 
 exports.createWatios = createWatios;
