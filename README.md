@@ -24,12 +24,37 @@ Usage
 First, you need to import and set up the Watios instance by providing a phone number and a passkey for validation.
 You will get the passkey from the watios-dashboard.
 ```
+
+DO NOT FORGET TO ADD THIS LINE AT THE BOTTOM. THIS IS THE MIDDLEWARE USED.
+
+// Error-handling middleware
+app.use(watiosErrorHandler);
+
+// Start the server
+app.listen(6000, () => {
+  console.log('Server running on port 6000');
+});
+
+--------------------------------------------------------------
+TO INITIALIZE
+
+
 import { createWatios, watiosAlert } from 'watios';
 
-const watios = createWatios({
-  phonenumber: '919778715634', // Your WhatsApp number (with country code)
-  passkey: 'your_passkey'       // Passkey for validation (set in your .env file)
+const { instance, watiosErrorHandler } = createWatios({
+  phonenumber: '919778715634', // Replace with your WhatsApp number
+  passkey: , // Replace with your actual passkey
 });
+
+const { createWatios, watiosAlert } = require('./node_modules/watios/dist/index.cjs'); // Adjust the import path
+
+const { instance, watiosErrorHandler } = createWatios({
+  phonenumber: '919778715634', // Replace with your WhatsApp number
+  passkey: , // Replace with your actual passkey
+});
+
+
+The instance can be used to call api just like axios object.
 
 ```
 
@@ -62,6 +87,15 @@ try {
 } catch (error) {
   watiosAlert(error); // Sends general errors to WhatsApp
 }
+
+
+For async function we should use next()
+
+catch (error) {
+    // Forward the error to the error-handling middleware   
+    next(error);
+  }
+
 
 ```
 
