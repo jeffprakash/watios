@@ -15,8 +15,7 @@
 
 Install the package using npm:
 
-bash
-npm install watios
+`npm install watios`
 
 
 Usage
