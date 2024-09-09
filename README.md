@@ -67,7 +67,7 @@ const requestBody = {
   key: 'value'
 };
 
-watios.post('https://api.example.com/data', requestBody)
+instance.post('https://api.example.com/data', requestBody)
   .then(response => {
     console.log('Success:', response.data);
   })
@@ -152,7 +152,7 @@ You can import Watios in either ES module or CommonJS format:
 
 - CommonJS:
 
-`const { createWatios, watiosAlert } = require('watios');`
+`const { createWatios, watiosAlert } = require('./node_modules/watios/dist/index.cjs'); // Adjust the import path`
 
 
 
